@@ -23,7 +23,7 @@ func main() {
 
 	// 打开药箱
 	r.GET("/medicine-box/open", func(c *gin.Context) {
-		token := mqttPublish("$oc/devices/64b5ef75b84c1334befb467a_000000000/sys/messages/up", "open")
+		token := mqttPublish("command", "open")
 		if token.Wait() && token.Error() != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to publish message"})
 			return
@@ -33,7 +33,7 @@ func main() {
 
 	// 关闭药箱
 	r.GET("/medicine-box/close", func(c *gin.Context) {
-		token := mqttPublish("$oc/devices/64b5ef75b84c1334befb467a_000000000/sys/messages/up", "close")
+		token := mqttPublish("command", "close")
 		if token.Wait() && token.Error() != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to publish message"})
 			return
@@ -70,7 +70,7 @@ func main() {
 			return
 		}
 
-		token := mqttPublish("$oc/devices/64b5ef75b84c1334befb467a_000000000/sys/messages/up", "play "+endpoint+"/"+md5hex)
+		token := mqttPublish("command", "play "+endpoint+"/"+md5hex)
 		if token.Wait() && token.Error() != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to publish message"})
 			return
@@ -127,7 +127,7 @@ func main() {
 		println(duration)
 		go func() {
 			time.Sleep(duration)
-			token := mqttPublish("$oc/devices/64b5ef75b84c1334befb467a_000000000/sys/messages/up", "play "+endpoint+"/"+md5hex)
+			token := mqttPublish("command", "play "+endpoint+"/"+md5hex)
 			if token.Wait() && token.Error() != nil {
 				log.Println("Failed to publish message")
 			}
@@ -139,10 +139,7 @@ func main() {
 
 func mqttPublish(topic string, message string) mqtt.Token {
 	opts := mqtt.NewClientOptions()
-	opts.AddBroker("tcp://6ac6d52656.st1.iotda-device.cn-north-4.myhuaweicloud.com:1883")
-	opts.SetClientID("64b5ef75b84c1334befb467a_000000000_0_0_2023071802")
-	opts.SetUsername("64b5ef75b84c1334befb467a_000000000")
-	opts.SetPassword("4ebb9a5a1cdf38878084b2397fde2b4c6b0acd1d78578a80979db89041bd0aaf")
+	opts.AddBroker("tcp://localhost:1883")
 	client := mqtt.NewClient(opts)
 	if token := client.Connect(); token.Wait() && token.Error() != nil {
 		log.Fatal(token.Error())
