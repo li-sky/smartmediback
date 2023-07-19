@@ -15,8 +15,6 @@ import (
 )
 
 func main() {
-	endpoint := "http://smartmedibox.skyli.xyz"
-
 	r := gin.Default()
 
 	r.Static("/audio", "./audio")
