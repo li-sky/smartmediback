@@ -70,7 +70,7 @@ func main() {
 			return
 		}
 
-		token := mqttPublish("command", "play "+endpoint+"/"+md5hex)
+		token := mqttPublish("command", "play "+endpoint+"/audio/"+md5hex)
 		if token.Wait() && token.Error() != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to publish message"})
 			return
@@ -127,7 +127,7 @@ func main() {
 		println(duration)
 		go func() {
 			time.Sleep(duration)
-			token := mqttPublish("command", "play "+endpoint+"/"+md5hex)
+			token := mqttPublish("command", "play "+endpoint+"/audio/"+md5hex)
 			if token.Wait() && token.Error() != nil {
 				log.Println("Failed to publish message")
 			}
